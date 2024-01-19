@@ -1,0 +1,19 @@
+{
+  "name": "cw1",
+  "version": "1.0.0",
+  "description": "[Link to GitHub Repository](https://github.com/Jo-costa/CST3145-CW1)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Joaldo Costa",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongodb": "^4.12.1",
+    "mongoose": "^8.1.0",
+    "properties-reader": "^2.3.0"
+  }
+}
