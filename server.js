@@ -75,7 +75,7 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
     
     const data = req.body;
 
-    console.log(JSON.stringify(data[1]));
+    console.log("LoggedDAta1: "+JSON.stringify(data[1]));
 
     res.json("Hello")
 
