@@ -5,16 +5,17 @@ const app = express();
 const cors = require("cors");
 
 app.use(express.json());
-// app.use(cors());
-// app.use((req, res, next) => {
-//     //enable cors for all routes
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-//     next();
-// });
 
+app.use((req, res, next) => {
+    //enable cors for all routes
+    // console.log(store);
+    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    next();
+});
 
+app.options("*", cors());
 let propertiesReader = require("properties-reader")
 let propertiesPath = path.resolve(__dirname, "conf/db.properties");
 let properties = propertiesReader(propertiesPath);
@@ -63,7 +64,7 @@ app.param("collectionName", function (req, res, next, collectionName) {
 app.get("/collections/:collectionName", function (req, res) {
     req.collection.find({}).toArray(function (error, results) {
         if (error) {
-            return error;
+            return next(error);
         }
         res.send(results);
     });
