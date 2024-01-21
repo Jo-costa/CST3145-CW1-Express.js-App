@@ -5,17 +5,16 @@ const app = express();
 const cors = require("cors");
 
 app.use(express.json());
+// app.use(cors());
+// app.use((req, res, next) => {
+//     //enable cors for all routes
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//     next();
+// });
 
-app.use((req, res, next) => {
-    //enable cors for all routes
-    // console.log(store);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    next();
-});
 
-app.options("*", cors());
 let propertiesReader = require("properties-reader")
 let propertiesPath = path.resolve(__dirname, "conf/db.properties");
 let properties = propertiesReader(propertiesPath);
@@ -58,6 +57,9 @@ app.param("collectionName", function (req, res, next, collectionName) {
     });
 });
 
+
+
+
 app.get("/collections/:collectionName", function (req, res) {
     req.collection.find({}).toArray(function (error, results) {
         if (error) {
@@ -66,6 +68,18 @@ app.get("/collections/:collectionName", function (req, res) {
         res.send(results);
     });
 });
+
+app.post("/collections/:collectionName/orderPlaced", function (req, res) {
+
+    
+    const data = req.body;
+
+    console.log(JSON.stringify(data[1]));
+
+    res.json("Hello")
+
+})
+
 
 
 const port = process.env.PORT || 3000;
