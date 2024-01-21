@@ -60,7 +60,7 @@ app.param("collectionName", function (req, res, next, collectionName) {
 
 
 
-app.get("/collections/:collectionName", function (req, res) {
+app.get("/collections/:collectionName", function (req, res, next) {
     req.collection.find({}).toArray(function (error, results) {
         if (error) {
             return next(error);
