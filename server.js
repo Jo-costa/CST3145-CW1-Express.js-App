@@ -75,9 +75,16 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
     
     const data = req.body;
 
-    console.log("LoggedDAta1: "+JSON.stringify(data));
+    db.collection('orders').insertOne(data, (error, result)=>{
+        if(error){
+            console.log(error);
+            res.status(500).send("Server Error")
+            return
+        }
 
-    res.json("Hello")
+        const orderId = result.ops[0]
+        res.json("Order Successfully placed. Order id"+ orderId);
+    })
 
 })
 
