@@ -75,7 +75,7 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
     
     const data = req.body;
 
-    db.collection('orders').insertOne(data, (error, result)=>{
+    req.collection.insertOne(data, (error, result)=>{
         if(error){
             console.log(error);
             res.status(500).send("Server Error")
