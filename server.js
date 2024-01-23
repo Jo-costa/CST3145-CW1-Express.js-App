@@ -90,6 +90,7 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
     
     const data = req.body;
 
+
     req.collection.insertOne(data, (error, result)=>{
         if(error){
             res.status(500).send("Server Error")
@@ -107,15 +108,21 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
 
 app.put('/collections/:collectionName', function(req, res){
 
-    const data = req.body;
+    const data = req.body.updateSpacesArray;
 
     const dataToUpdate = []
     
+    
+    data.forEach((item)=> {
 
-    dataToUpdate.push({
-        id: data.orderInfo.basketData[0].productID,
-        spaces: data.orderInfo.basketData[0].updateInv
+        dataToUpdate.push({
+            id: item.productID,
+            spaces: item.updateInv
+        })
     })
+
+    
+
 
     dataToUpdate.forEach((item)=>{
         req.collection.updateMany({id: item.id}, {$set: {spaces: item.spaces}}, (error, result)=>{
@@ -126,8 +133,10 @@ app.put('/collections/:collectionName', function(req, res){
 
         })
 
-        res.send("Successfully updated")
     })
+
+    
+    res.send("Successfully updated")
 
 
 })
