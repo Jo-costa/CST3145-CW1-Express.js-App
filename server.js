@@ -12,6 +12,12 @@ app.use(express.json());
 
 app.use(cors())
 
+app.use(function(req, res, next){
+    console.log("Incoming request url: " + req.protocol+'://'+req.get('host') + req.url);
+    console.log("Incoming request url: " + req.protocol+'://'+req.get('host') + req.originalUrl);
+    next();  
+})
+
 // app.use(cors({
 //     origin: 'https://store-env.eba-xvfgdgap.eu-west-2.elasticbeanstalk.com/collections/orders/orderPLaced', // Allow requests only from this origin
 //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow specified methods
@@ -46,6 +52,7 @@ const {
     ServerApiVersion,
     ObjectId
 } = require('mongodb');
+const { error } = require("console");
 
 
 const connectDB = async () => {
@@ -63,15 +70,14 @@ const connectDB = async () => {
 
 
 
+
+
 app.param("collectionName", function (req, res, next, collectionName) {
     connectDB().then((db) => {
         req.collection = db.collection(collectionName);
         next();
     });
 });
-
-
-
 
 app.get("/collections/:collectionName", function (req, res) {
     req.collection.find({}).toArray(function (error, results) {
@@ -87,8 +93,6 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
     
     const data = req.body;
 
-    console.log(data);
-
     req.collection.insertOne(data, (error, result)=>{
         if(error){
             res.status(500).send("Server Error")
@@ -96,10 +100,8 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
         }
 
         
-        const orderId = result.insertedId
-        res.json(JSON.stringify({id: orderId}));
-        
-        // res.send("Order Successfully placed. Order id: " + orderId +" - result " + result);
+        const orderId = result.insertedId        
+        res.send("Order Successfully placed. Order id: " + orderId);
         
     })
 
@@ -110,9 +112,26 @@ app.put('/collections/:collectionName', function(req, res){
 
     const data = req.body;
 
+    const dataToUpdate = []
+    
 
-    console.log(JSON.stringify(data));
-    // req.collection.updateOne({_id: id}, {spaces: })
+    dataToUpdate.push({
+        id: data.orderInfo.basketData[0].productID,
+        spaces: data.orderInfo.basketData[0].updateInv
+    })
+
+    dataToUpdate.forEach((item)=>{
+        req.collection.updateMany({id: item.id}, {$set: {spaces: item.spaces}}, (error, result)=>{
+            if(error){
+                res.status(500).send("Server Error")
+                return
+            }
+
+        })
+
+        res.send("Successfully updated")
+    })
+
 
 })
 
