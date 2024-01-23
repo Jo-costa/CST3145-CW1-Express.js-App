@@ -91,14 +91,14 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
 
     req.collection.insertOne(data, (error, result)=>{
         if(error){
-            console.log(error);
             res.status(500).send("Server Error")
             return
         }
 
         
         const orderId = result.insertedId
-        res.json("Order Successfully placed. Order id: " + orderId);
+        res.send("Order Successfully placed. Order id: " + orderId +" - result " + result);
+        res.send({id: orderId});
     })
 
 })
