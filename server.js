@@ -87,7 +87,7 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
     
     const data = req.body;
 
-    console.log();
+    console.log(data);
 
     req.collection.insertOne(data, (error, result)=>{
         if(error){
@@ -102,6 +102,17 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
         // res.send("Order Successfully placed. Order id: " + orderId +" - result " + result);
         
     })
+
+})
+
+
+app.put('/collections/:collectionName', function(req, res){
+
+    const data = req.body;
+
+
+    console.log(JSON.stringify(data));
+    // req.collection.updateOne({_id: id}, {spaces: })
 
 })
 
