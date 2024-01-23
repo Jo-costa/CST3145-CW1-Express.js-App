@@ -6,16 +6,28 @@ const cors = require("cors");
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-    //enable cors for all routes
-    // console.log(store);
-    res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    next();
-});
+// app.use(cors({
+//     origin: 'http://127.0.0.1:5500'
+//   }));
 
-app.options("*", cors());
+app.use(cors())
+
+// app.use(cors({
+//     origin: 'https://store-env.eba-xvfgdgap.eu-west-2.elasticbeanstalk.com/collections/orders/orderPLaced', // Allow requests only from this origin
+//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow specified methods
+//     optionsSuccessStatus: 204, // Set the response status for successful preflight requests
+//     credentials: true, // Enable credentials (cookies, HTTP authentication) in CORS requests
+// }));
+// app.use((req, res, next) => {
+//     //enable cors for all routes
+//     // console.log(store);
+//     res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//     next();
+// });
+
+// app.options("*", cors());
 let propertiesReader = require("properties-reader")
 let propertiesPath = path.resolve(__dirname, "conf/db.properties");
 let properties = propertiesReader(propertiesPath);
@@ -75,6 +87,8 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
     
     const data = req.body;
 
+    console.log();
+
     req.collection.insertOne(data, (error, result)=>{
         if(error){
             console.log(error);
@@ -82,8 +96,9 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
             return
         }
 
-        const orderId = result.ops[0]
-        res.json("Order Successfully placed. Order id"+ orderId);
+        
+        const orderId = result.insertedId
+        res.json("Order Successfully placed. Order id: " + orderId);
     })
 
 })
