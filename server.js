@@ -97,8 +97,9 @@ app.post("/collections/:collectionName/orderPlaced", function (req, res) {
 
         
         const orderId = result.insertedId
-        res.send("Order Successfully placed. Order id: " + orderId +" - result " + result);
         res.send({id: orderId});
+        // res.send("Order Successfully placed. Order id: " + orderId +" - result " + result);
+        
     })
 
 })
