@@ -51,6 +51,33 @@ const connectDB = async () => {
 
 
 
+app.use('/img', (req, res, next)=>{
+
+    const filePath = path.join(__dirname, ".." ,"frontend","img", req.url)
+    fs.stat(filePath, (error, fileInfo)=>{
+
+        if(error){
+            next()
+            return
+        }
+
+        if(fileInfo.isFile()){
+            res.sendFile(filePath)
+        }else{
+            next();
+        }
+
+    })
+
+})
+
+app.use("/img",(req, res)=>{
+    res.status(404)
+    res.send("Image not found!")
+})
+
+
+
 
 app.param("collectionName", function (req, res, next, collectionName) {
     connectDB().then((db) => {
@@ -59,22 +86,6 @@ app.param("collectionName", function (req, res, next, collectionName) {
     });
 });
 
-app.get("/images",function(req, res, next){
-    const filePath = path.join(__dirname, "static", req.url);
-
-    fs.stat(filePath, function(err, fileInfo){
-        if(err){
-            next();
-            return;
-        }
-
-        if(fileInfo.isFile()){
-            res.sendFile(filePath)
-        }else{
-            next();
-        }
-    })
-})
 
 app.get("/collections/:collectionName", function (req, res) {
     req.collection.find({}).toArray(function (error, results) {
@@ -85,12 +96,47 @@ app.get("/collections/:collectionName", function (req, res) {
     });
 });
 
-app.post("/collections/:collectionName/orderPlaced", function (req, res) {
+app.get("/collections/:collectionName/search", function (req, res, next) {
+
+    const search = req.query.query
+    req.collection.find(
+        {
+            $or:
+            [
+                {
+                    subject:
+                    {
+                        $regex: `${search}`, 
+                        $options:"i"
+                    }
+                },
+                         {
+                            "location": 
+                         {
+                            $regex: `${search}`, 
+                         $options:"i"
+                        }
+                    }
+                ]
+            }).toArray(function (error, results) {
+        if (error) {
+            return next(error);
+        }
+        console.log("res" +JSON.stringify(results));
+        if(results.length > 0){
+
+            res.send(results);
+        }else{
+            res.json([])
+        }
+    });
 
     
+});
+
+app.post("/collections/:collectionName/orderPlaced", function (req, res) {
+
     const data = req.body;
-
-
     req.collection.insertOne(data, (error, result)=>{
         if(error){
             res.status(500).send("Server Error")
@@ -140,6 +186,7 @@ app.put('/collections/:collectionName', function(req, res){
 
 
 })
+
 
 
 
