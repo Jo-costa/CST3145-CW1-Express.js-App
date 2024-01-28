@@ -122,7 +122,6 @@ app.get("/collections/:collectionName/search", function (req, res, next) {
         if (error) {
             return next(error);
         }
-        console.log("res" +JSON.stringify(results));
         if(results.length > 0){
 
             res.send(results);
